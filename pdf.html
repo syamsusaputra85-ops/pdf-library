@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perpustakaan PDF Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .pdf-card {
+            transition: all 0.3s ease;
+        }
+        .pdf-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .search-highlight {
+            background-color: #fef3c7;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-file-pdf text-3xl text-red-500"></i>
+                    <h1 class="text-3xl font-bold text-gray-900">Perpustakaan PDF Digital</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-gray-600" id="totalFiles">0 dokumen</span>
+                    <button onclick="uploadPDF()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
+                        <i class="fas fa-plus"></i>
+                        <span>Tambah PDF</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Search and Filter Section -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+            <div class="flex flex-col md:flex-row gap-4">
+                <!-- Search Bar -->
+                <div class="flex-1 relative">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="searchInput" placeholder="Cari dokumen PDF..." 
+                           class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                           oninput="searchPDFs()">
+                </div>
+                
+                <!-- Category Filter -->
+                <div class="md:w-48">
+                    <select id="categoryFilter" onchange="filterByCategory()" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">Semua Kategori</option>
+                        <option value="ebook">E-book</option>
+                        <option value="jurnal">Jurnal</option>
+                        <option value="makalah">Makalah</option>
+                        <option value="presentasi">Presentasi</option>
+                        <option value="panduan">Panduan</option>
+                        <option value="laporan">Laporan</option>
+                    </select>
+                </div>
+                
+                <!-- Sort Options -->
+                <div class="md:w-48">
+                    <select id="sortOptions" onchange="sortPDFs()" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">Urutkan</option>
+                        <option value="name">Nama A-Z</option>
+                        <option value="date">Terbaru</option>
+                        <option value="size">Ukuran</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- PDF Grid -->
+        <div id="pdfGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+            <!-- PDF cards will be rendered here -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="text-center py-12 hidden">
+            <i class="fas fa-file-pdf text-6xl text-gray-300 mb-4"></i>
+            <h3 class="text-xl font-semibold text-gray-600 mb-2">Tidak ada dokumen ditemukan</h3>
+            <p class="text-gray-500 mb-6">Coba ubah kata kunci pencarian atau filter kategori</p>
+            <button onclick="uploadPDF()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg">
+                <i class="fas fa-plus mr-2"></i>Tambah PDF Pertama
+            </button>
+        </div>
+    </div>
+
+    <!-- PDF Modal -->
+    <div id="pdfModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl w-full max-w-5xl max-h-[95vh] overflow-hidden flex flex-col">
+            <!-- Header -->
+            <div class="flex items-center justify-between p-4 border-b bg-gray-50">
+                <h3 id="pdfModalTitle" class="text-lg font-semibold text-gray-900 truncate flex-1 mr-4"></h3>
+                <div class="flex items-center space-x-2">
+                    <!-- Zoom Controls -->
+                    <button onclick="zoomOut()" class="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 rounded-lg transition-colors" title="Zoom Out">
+                        <i class="fas fa-search-minus"></i>
+                    </button>
+                    <span id="zoomLevel" class="text-sm text-gray-600 min-w-[60px] text-center">100%</span>
+                    <button onclick="zoomIn()" class="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 rounded-lg transition-colors" title="Zoom In">
+                        <i class="fas fa-search-plus"></i>
+                    </button>
+                    
+                    <!-- Fullscreen Toggle -->
+                    <button onclick="toggleFullscreen()" class="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 rounded-lg transition-colors" title="Fullscreen">
+                        <i class="fas fa-expand" id="fullscreenIcon"></i>
+                    </button>
+                    
+                    <!-- Close Button -->
+                    <button onclick="closePDFModal()" class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded-lg transition-colors">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- PDF Viewer Container -->
+            <div class="flex-1 overflow-hidden bg-gray-100">
+                <div id="pdfViewerContainer" class="w-full h-full overflow-auto">
+                    <iframe id="pdfViewer" class="w-full h-full border-0 transition-transform duration-200" style="min-height: 600px;"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-md w-full">
+            <div class="p-6 text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+                    <i class="fas fa-check text-green-600 text-xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Upload Berhasil!</h3>
+                <p class="text-gray-600 mb-4" id="successMessage">
+                    File PDF berhasil ditambahkan ke perpustakaan
+                </p>
+                <div class="bg-blue-50 rounded-lg p-4 mb-6">
+                    <div class="flex items-center justify-center space-x-2">
+                        <i class="fas fa-file-pdf text-blue-600"></i>
+                        <span class="text-blue-800 font-medium" id="totalFilesInModal">Total: 0 dokumen</span>
+                    </div>
+                </div>
+                <button onclick="closeSuccessModal()" 
+                        class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Modal -->
+    <div id="uploadModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-md w-full">
+            <div class="flex items-center justify-between p-6 border-b">
+                <h3 class="text-lg font-semibold text-gray-900">Tambah PDF Baru</h3>
+                <button onclick="closeUploadModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <form id="uploadForm" onsubmit="handleUpload(event)">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">File PDF</label>
+                        <input type="file" id="pdfFile" accept=".pdf" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Dokumen</label>
+                        <input type="text" id="pdfName" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                               placeholder="Masukkan nama dokumen">
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Kategori</label>
+                        <select id="pdfCategory" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">Pilih Kategori</option>
+                            <option value="ebook">E-book</option>
+                            <option value="jurnal">Jurnal</option>
+                            <option value="makalah">Makalah</option>
+                            <option value="presentasi">Presentasi</option>
+                            <option value="panduan">Panduan</option>
+                            <option value="laporan">Laporan</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Deskripsi</label>
+                        <textarea id="pdfDescription" rows="3"
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                  placeholder="Deskripsi singkat tentang dokumen"></textarea>
+                    </div>
+                    
+                    <div class="flex space-x-3">
+                        <button type="button" onclick="closeUploadModal()" 
+                                class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
+                            Batal
+                        </button>
+                        <button type="submit" 
+                                class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                            Upload
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // PDF files array - starts empty
+        let pdfFiles = [];
+
+        // Load files from localStorage on page load
+        function loadFilesFromStorage() {
+            const savedFiles = localStorage.getItem('pdfLibraryFiles');
+            if (savedFiles) {
+                try {
+                    const parsedFiles = JSON.parse(savedFiles);
+                    // Only load uploaded files (those with base64Data)
+                    const uploadedFiles = parsedFiles.filter(pdf => pdf.base64Data);
+                    
+                    // Convert base64 back to blob URLs for viewing
+                    uploadedFiles.forEach(pdf => {
+                        if (pdf.base64Data) {
+                            const byteCharacters = atob(pdf.base64Data.split(',')[1]);
+                            const byteNumbers = new Array(byteCharacters.length);
+                            for (let i = 0; i < byteCharacters.length; i++) {
+                                byteNumbers[i] = byteCharacters.charCodeAt(i);
+                            }
+                            const byteArray = new Uint8Array(byteNumbers);
+                            const blob = new Blob([byteArray], { type: 'application/pdf' });
+                            pdf.localURL = URL.createObjectURL(blob);
+                        }
+                    });
+                    
+                    // Add uploaded files to the main array
+                    pdfFiles.push(...uploadedFiles);
+                } catch (error) {
+                    console.error('Error loading files from localStorage:', error);
+                }
+            }
+        }
+
+        // Save only uploaded files to localStorage
+        function saveFilesToStorage() {
+            try {
+                // Only save files that were uploaded (have base64Data)
+                const uploadedFiles = pdfFiles.filter(pdf => pdf.base64Data);
+                localStorage.setItem('pdfLibraryFiles', JSON.stringify(uploadedFiles));
+            } catch (error) {
+                console.error('Error saving files to localStorage:', error);
+                alert('Gagal menyimpan file. Storage browser mungkin penuh.');
+            }
+        }
+
+        let filteredFiles = [...pdfFiles];
+        let currentPDF = null;
+        let currentZoom = 100;
+        let isFullscreen = false;
+
+        function renderPDFs() {
+            const grid = document.getElementById('pdfGrid');
+            const emptyState = document.getElementById('emptyState');
+
+            if (filteredFiles.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            grid.innerHTML = filteredFiles.map(pdf => `
+                <div class="pdf-card bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-file-pdf text-2xl text-red-500"></i>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900 text-sm leading-tight">${pdf.name}</h3>
+                                    <span class="inline-block mt-1 px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">${pdf.category}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">${pdf.description}</p>
+
+                        <div class="flex items-center justify-between text-xs text-gray-500 mb-4">
+                            <span><i class="fas fa-calendar mr-1"></i>${formatDate(pdf.date)}</span>
+                            <span><i class="fas fa-file-alt mr-1"></i>${pdf.size}</span>
+                        </div>
+
+                        <div class="flex space-x-2">
+                            <button onclick="viewPDF('${pdf.filename}', '${pdf.name}')"
+                                    class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm py-2 px-3 rounded-lg transition-colors">
+                                <i class="fas fa-eye mr-1"></i>Lihat
+                            </button>
+                            <button onclick="downloadPDFDirect('${pdf.filename}')"
+                                    class="bg-green-600 hover:bg-green-700 text-white text-sm py-2 px-3 rounded-lg transition-colors">
+                                <i class="fas fa-download"></i>
+                            </button>
+                            <button onclick="deletePDF(${pdf.id})"
+                                    class="bg-red-600 hover:bg-red-700 text-white text-sm py-2 px-3 rounded-lg transition-colors">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            updateFileCount();
+        }
+
+        function searchPDFs() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const categoryFilter = document.getElementById('categoryFilter').value;
+
+            filteredFiles = pdfFiles.filter(pdf => {
+                const matchesSearch = pdf.name.toLowerCase().includes(searchTerm) ||
+                                    pdf.description.toLowerCase().includes(searchTerm);
+                const matchesCategory = !categoryFilter || pdf.category === categoryFilter;
+
+                return matchesSearch && matchesCategory;
+            });
+
+            renderPDFs();
+        }
+
+        function filterByCategory() {
+            searchPDFs(); // Reuse search function for filtering
+        }
+
+        function sortPDFs() {
+            const sortBy = document.getElementById('sortOptions').value;
+
+            filteredFiles.sort((a, b) => {
+                switch(sortBy) {
+                    case 'name':
+                        return a.name.localeCompare(b.name);
+                    case 'date':
+                        return new Date(b.date) - new Date(a.date);
+                    case 'size':
+                        return parseFloat(b.size) - parseFloat(a.size);
+                    default:
+                        return 0;
+                }
+            });
+
+            renderPDFs();
+        }
+
+        function viewPDF(filename, name) {
+            // Find the PDF in our files array
+            const pdf = pdfFiles.find(p => p.filename === filename);
+            
+            if (pdf && pdf.localURL) {
+                // If it's a locally uploaded file, use the blob URL
+                document.getElementById('pdfViewer').src = pdf.localURL;
+            } else {
+                // For demo purposes, show a placeholder
+                document.getElementById('pdfViewer').src = `data:text/html,<html><body style="font-family:Arial;padding:20px;text-align:center;"><h2>PDF Viewer</h2><p>File: ${name}</p><p>Dalam implementasi nyata, PDF akan ditampilkan di sini.</p><p>Untuk file yang diupload, viewer akan menampilkan konten PDF yang sebenarnya.</p></body></html>`;
+            }
+            
+            document.getElementById('pdfModalTitle').textContent = name;
+            document.getElementById('pdfModal').classList.remove('hidden');
+            currentPDF = filename;
+        }
+
+        function closePDFModal() {
+            // Exit fullscreen if active
+            if (isFullscreen) {
+                toggleFullscreen();
+            }
+            
+            document.getElementById('pdfModal').classList.add('hidden');
+            document.getElementById('pdfViewer').src = '';
+            currentPDF = null;
+            currentZoom = 100;
+            updateZoomDisplay();
+        }
+
+        function zoomIn() {
+            if (currentZoom < 200) {
+                currentZoom += 25;
+                applyZoom();
+            }
+        }
+
+        function zoomOut() {
+            if (currentZoom > 50) {
+                currentZoom -= 25;
+                applyZoom();
+            }
+        }
+
+        function applyZoom() {
+            const viewer = document.getElementById('pdfViewer');
+            viewer.style.transform = `scale(${currentZoom / 100})`;
+            viewer.style.transformOrigin = 'top left';
+            
+            // Adjust container size to accommodate zoom
+            const container = document.getElementById('pdfViewerContainer');
+            if (currentZoom > 100) {
+                viewer.style.width = `${currentZoom}%`;
+                viewer.style.height = `${currentZoom}%`;
+            } else {
+                viewer.style.width = '100%';
+                viewer.style.height = '100%';
+            }
+            
+            updateZoomDisplay();
+        }
+
+        function updateZoomDisplay() {
+            document.getElementById('zoomLevel').textContent = currentZoom + '%';
+        }
+
+        function toggleFullscreen() {
+            const modal = document.getElementById('pdfModal');
+            const icon = document.getElementById('fullscreenIcon');
+            
+            if (!isFullscreen) {
+                // Enter fullscreen
+                modal.classList.remove('p-4');
+                modal.querySelector('.bg-white').classList.remove('rounded-xl', 'max-w-5xl', 'max-h-[95vh]');
+                modal.querySelector('.bg-white').classList.add('w-screen', 'h-screen');
+                icon.classList.remove('fa-expand');
+                icon.classList.add('fa-compress');
+                isFullscreen = true;
+            } else {
+                // Exit fullscreen
+                modal.classList.add('p-4');
+                modal.querySelector('.bg-white').classList.add('rounded-xl', 'max-w-5xl', 'max-h-[95vh]');
+                modal.querySelector('.bg-white').classList.remove('w-screen', 'h-screen');
+                icon.classList.remove('fa-compress');
+                icon.classList.add('fa-expand');
+                isFullscreen = false;
+            }
+        }
+
+        function downloadPDFDirect(filename) {
+            // Find the PDF in our files array
+            const pdf = pdfFiles.find(p => p.filename === filename);
+            
+            if (pdf && pdf.localURL) {
+                // Create download link for locally uploaded file
+                const link = document.createElement('a');
+                link.href = pdf.localURL;
+                link.download = pdf.name + '.pdf';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                alert(`Download untuk "${pdf.name}" tidak tersedia.\n\nUntuk file demo, fitur download tidak aktif. File yang Anda upload sendiri dapat didownload.`);
+            }
+        }
+
+        function deletePDF(id) {
+            const pdf = pdfFiles.find(p => p.id === id);
+            if (pdf && confirm(`Apakah Anda yakin ingin menghapus "${pdf.name}"?`)) {
+                // Revoke object URL if it exists to free memory
+                if (pdf.localURL) {
+                    URL.revokeObjectURL(pdf.localURL);
+                }
+                
+                pdfFiles = pdfFiles.filter(p => p.id !== id);
+                filteredFiles = filteredFiles.filter(p => p.id !== id);
+                
+                // Save to localStorage after deletion (only if it was an uploaded file)
+                if (pdf.isUploaded) {
+                    saveFilesToStorage();
+                }
+                
+                renderPDFs();
+                alert(`"${pdf.name}" berhasil dihapus.`);
+            }
+        }
+
+        function uploadPDF() {
+            document.getElementById('uploadModal').classList.remove('hidden');
+        }
+
+        function closeUploadModal() {
+            document.getElementById('uploadModal').classList.add('hidden');
+            document.getElementById('uploadForm').reset();
+        }
+
+        function showSuccessModal(fileName, totalFiles) {
+            document.getElementById('successMessage').textContent = `"${fileName}" berhasil ditambahkan ke perpustakaan`;
+            document.getElementById('totalFilesInModal').textContent = `Total: ${totalFiles} dokumen`;
+            document.getElementById('successModal').classList.remove('hidden');
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.add('hidden');
+        }
+
+        function handleUpload(event) {
+            event.preventDefault();
+            
+            const fileInput = document.getElementById('pdfFile');
+            const nameInput = document.getElementById('pdfName');
+            const categoryInput = document.getElementById('pdfCategory');
+            const descriptionInput = document.getElementById('pdfDescription');
+            
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Silakan pilih file PDF');
+                return;
+            }
+
+            if (file.type !== 'application/pdf') {
+                alert('File harus berformat PDF');
+                return;
+            }
+
+            // Show loading message
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Menyimpan...';
+            submitBtn.disabled = true;
+
+            // Read file as base64 for storage
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // Generate new ID
+                const newId = Math.max(...pdfFiles.map(p => p.id), 0) + 1;
+                
+                // Create new PDF object with base64 data
+                const newPDF = {
+                    id: newId,
+                    name: nameInput.value,
+                    filename: file.name,
+                    category: categoryInput.value,
+                    size: formatFileSize(file.size),
+                    date: new Date().toISOString().split('T')[0],
+                    description: descriptionInput.value || 'Tidak ada deskripsi',
+                    base64Data: e.target.result, // Store base64 data
+                    isUploaded: true // Mark as uploaded file
+                };
+
+                // Create object URL for immediate viewing
+                const fileURL = URL.createObjectURL(file);
+                newPDF.localURL = fileURL;
+
+                // Add to files array
+                pdfFiles.push(newPDF);
+                filteredFiles = [...pdfFiles];
+
+                // Save to localStorage
+                saveFilesToStorage();
+
+                // Re-render and close modal
+                renderPDFs();
+                closeUploadModal();
+
+                // Reset button
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+
+                // Show success modal with file count
+                showSuccessModal(newPDF.name, pdfFiles.length);
+            };
+
+            reader.onerror = function() {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+                alert('Gagal membaca file. Silakan coba lagi.');
+            };
+
+            // Read file as data URL (base64)
+            reader.readAsDataURL(file);
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('id-ID', options);
+        }
+
+        function updateFileCount() {
+            document.getElementById('totalFiles').textContent = `${filteredFiles.length} dokumen`;
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFilesFromStorage(); // Load saved files first
+            filteredFiles = [...pdfFiles]; // Update filtered files
+            renderPDFs();
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('pdfModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePDFModal();
+            }
+        });
+
+        // Close upload modal when clicking outside
+        document.getElementById('uploadModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeUploadModal();
+            }
+        });
+
+        // Close success modal when clicking outside
+        document.getElementById('successModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeSuccessModal();
+            }
+        });
+
+        // Keyboard shortcuts for PDF viewer
+        document.addEventListener('keydown', function(e) {
+            // Only work when PDF modal is open
+            if (!document.getElementById('pdfModal').classList.contains('hidden')) {
+                switch(e.key) {
+                    case '+':
+                    case '=':
+                        e.preventDefault();
+                        zoomIn();
+                        break;
+                    case '-':
+                        e.preventDefault();
+                        zoomOut();
+                        break;
+                    case 'f':
+                    case 'F':
+                        if (e.ctrlKey || e.metaKey) {
+                            e.preventDefault();
+                            toggleFullscreen();
+                        }
+                        break;
+                    case 'Escape':
+                        if (isFullscreen) {
+                            toggleFullscreen();
+                        } else {
+                            closePDFModal();
+                        }
+                        break;
+                }
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97cfeb75930baa81',t:'MTc1NzUxNzczNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
