@@ -1,449 +1,430 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+    <script src="https://kit.fontawesome.com/bfef1b2406.js" crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perpustakaan PDF Digital</title>
+    <title>Dashboard Portofolio Profesional | Admin & Data Specialist</title>
+    <link rel="icon" type="image/png" href="https://res.cloudinary.com/di8stbg60/image/upload/v1757245484/SYAMDIGITAL-LOGO-2025_mmpllg.png">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        .pdf-card {
-            transition: all 0.3s ease;
+        :root {
+            --navy-dark: #0f172a;
+            --navy-mid: #1e293b;
+            --accent-gold: #b48d56;
+            --accent-light: #d97706;
+            --bg-light: #f1f5f9;
+            --white: #ffffff;
         }
-        .pdf-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .search-highlight {
-            background-color: #fef3c7;
-            padding: 2px 4px;
-            border-radius: 4px;
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--navy-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation Bar */
+        nav {
+            background-color: var(--navy-dark);
+            padding: 1.2rem 5%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            color: var(--white);
+            font-weight: 700;
+            font-size: 1.4rem;
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+
+        .logo span {
+            color: var(--accent-gold);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: 0.3s;
+            padding: 8px 15px;
+            border-radius: 6px;
+        }
+
+        .nav-links a:hover {
+            color: var(--white);
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 100px 5% 140px;
+            text-align: center;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            color: white;
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%);
+        }
+
+        .badge {
+            background: var(--accent-gold);
+            color: white;
+            padding: 6px 18px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: inline-block;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.85;
+            max-width: 700px;
+            margin: 0 auto;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Dashboard Cards Grid */
+        .main-container {
+            max-width: 1100px;
+            margin: -80px auto 60px;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--white);
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            color: inherit;
+            border: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border-color: var(--accent-gold);
+        }
+
+        .icon-box {
+            width: 70px;
+            height: 70px;
+            background: var(--bg-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 25px;
+            transition: 0.3s;
+        }
+
+        .card:hover .icon-box {
+            background: var(--navy-dark);
+            color: white;
+        }
+
+        .card h3 {
+            color: var(--navy-dark);
+            margin-bottom: 15px;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .card p {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .btn-action {
+            padding: 10px 25px;
+            background: var(--navy-mid);
+            color: white;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .card:hover .btn-action {
+            background: var(--accent-light);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 60px 20px;
+            background: var(--navy-dark);
+            color: #94a3b8;
+        }
+
+        .footer-text {
+            font-size: 0.9rem;
+            max-width: 600px;
+            margin: 0 auto 20px;
+        }
+
+        .copyright {
+            font-size: 0.75rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 20px;
+            display: inline-block;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .nav-links { display: none; } /* Mobile menu simplified */
+            .main-container { margin-top: -50px; }
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
-    <!-- Header -->
-    <header class="bg-white shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <i class="fas fa-file-pdf text-3xl text-red-500"></i>
-                    <h1 class="text-3xl font-bold text-gray-900">Perpustakaan PDF Digital</h1>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <span class="text-sm text-gray-600" id="totalFiles">0 dokumen</span>
-                    <button onclick="uploadPDF()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
-                        <i class="fas fa-plus"></i>
-                        <span>Tambah PDF</span>
-                    </button>
-                </div>
+<body>
+
+<nav>
+    <a href="index.html" class="logo">ADMIN<span>EXCEL</span>.PRO</a>
+    <div class="nav-links">
+    <a href="profil.html">Profil</a>
+    <a href="portofolio.html">Portofolio</a>
+    <a href="hargajasa.html">Harga Jasa</a> <!-- Tambahkan ini -->
+    <a href="penawaran.html">Penawaran</a>
+    <a href="interview.html">Interview</a>
+</div>
+
+</nav>
+
+<header class="hero">
+    <div class="badge">Sekretaris Desa & Data Expert</div>
+    <h1>Pusat Kendali Karir Online</h1>
+    <p>Mengelola administrasi dan data dengan standar ketelitian birokrasi, kini hadir untuk solusi bisnis digital Anda.</p>
+</header>
+
+<main class="main-container">
+    <!-- Card 1: Profil -->
+    <a href="profil.html" class="card">
+        <div class="icon-box"><i class="fa-chisel fa-regular fa-address-card"></i></div>
+        <h3>Profil Profesional</h3>
+        <p>Ringkasan latar belakang kerja sebagai Sekretaris Desa dan penguasaan tools administrasi.</p>
+        <div class="btn-action">Lihat Profil</div>
+    </a>
+
+    <!-- Card 2: Portofolio Excel -->
+    <a href="portofolio.html" class="card">
+        <div class="icon-box"><i class="fa-sharp-duotone fa-solid fa-file-excel"></i></div>
+        <h3>Karya Excel</h3>
+        <p>Demonstrasi pengolahan data menggunakan Pivot Table, Rumus Lanjut, dan Dashboard Interaktif.</p>
+        <div class="btn-action">Lihat Project</div>
+    </a>
+
+    <!-- Card 3: Template Penawaran -->
+    <a href="penawaran.html" class="card">
+        <div class="icon-box"><i class="fa-duotone fa-solid fa-cards-blank"></i></div>
+        <h3>Strategi Bidding</h3>
+        <p>Kumpulan template surat penawaran (Proposal) yang meyakinkan untuk memenangkan proyek online.</p>
+        <div class="btn-action">Pelajari Teknik</div>
+    </a>
+
+    <!-- Card 4: Panduan Interview -->
+    <a href="interview.html" class="card">
+        <div class="icon-box"><i class="fa-duotone fa-solid fa-clipboard-question"></i></div>
+        <h3>Tanya Jawab</h3>
+        <p>Persiapan mental dan materi jawaban saat berhadapan dengan calon klien via chat atau video call.</p>
+        <div class="btn-action">Siapkan Diri</div>
+    </a>
+</main>
+
+<footer>
+    <div class="footer-text">
+        "Ketelitian adalah kunci, integritas adalah janji. Siap memberikan layanan administrasi terbaik untuk setiap proyek Anda."
+    </div>
+    <div class="copyright">
+        &copy; 2026 Dashboard Profesional Sekdes. Hak Cipta Dilindungi.
+    </div>
+</footer>
+<!-- Tombol WhatsApp Melayang -->
+<style>
+    .whatsapp-float {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background-color: #25d366;
+        color: #FFF;
+        border-radius: 50px;
+        text-align: center;
+        padding: 15px 25px;
+        box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+        z-index: 1000;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    .whatsapp-float:hover {
+        background-color: #128c7e;
+        transform: scale(1.05);
+        color: #FFF;
+    }
+
+    .wa-icon {
+        font-size: 20px;
+    }
+
+.animate-fade-in-up {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+        
+        @keyframes bounce-subtle {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-3px);
+            }
+            60% {
+                transform: translateY(-2px);
+            }
+        }
+        
+        .animate-bounce-subtle {
+            animation: bounce-subtle 2s infinite;
+        }
+        
+        @keyframes gradient-x {
+            0%, 100% {
+                background-size: 200% 200%;
+                background-position: left center;
+            }
+            50% {
+                background-size: 200% 200%;
+                background-position: right center;
+            }
+        }
+        
+        .animate-gradient-x {
+            background-size: 200% 200%;
+            animation: gradient-x 3s ease infinite;
+        }
+        
+        @keyframes rainbow-text {
+            0% { background-position: 0% 50%; }
+            25% { background-position: 100% 50%; }
+            50% { background-position: 100% 50%; }
+            75% { background-position: 0% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .rainbow-text {
+            background: linear-gradient(
+                45deg,
+                #ff0000,
+                #ff7f00,
+                #ffff00,
+                #00ff00,
+                #0000ff,
+                #4b0082,
+                #9400d3,
+                #ff0000
+            );
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: rainbow-text 3s ease-in-out infinite;
+        }
+        
+        .rainbow-text:hover {
+            animation-duration: 1s;
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+        }
+        
+        .text-brand-container:hover .animate-bounce-subtle {
+            animation-duration: 0.8s;
+        }
+        
+        .group:hover .animate-bounce-subtle {
+            animation-play-state: running;
+        }
+</style>
+
+<!-- GANTI NOMOR DI BAWAH: Gunakan format 628... (tanpa tanda + atau spasi) -->
+<div class="fixed bottom-6 right-6 z-50">
+        <a href="https://wa.me/6285150531572" target="_blank" class="group flex items-center bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-full shadow-2xl hover:shadow-green-500/25 transition-all duration-300 transform hover:scale-110 animate-bounce-subtle">
+            <!-- WhatsApp Icon -->
+            <div class="flex items-center justify-center w-14 h-14 rounded-full">
+                <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"></path>
+                </svg>
             </div>
-        </div>
-    </header>
-
-    <!-- Search and Filter Section -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
-            <div class="flex flex-col md:flex-row gap-4">
-                <!-- Search Bar -->
-                <div class="flex-1 relative">
-                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                    <input 
-                        type="text" 
-                        id="searchInput"
-                        placeholder="Cari dokumen PDF..." 
-                        class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        oninput="searchPDFs()"
-                    >
-                </div>
-                
-                <!-- Category Filter -->
-                <select id="categoryFilter" onchange="filterByCategory()" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                    <option value="">Semua Kategori</option>
-                    <option value="dokumen">Dokumen</option>
-                    <option value="laporan">Laporan</option>
-                    <option value="panduan">Panduan</option>
-                    <option value="presentasi">Presentasi</option>
-                    <option value="lainnya">Lainnya</option>
-                </select>
-
-                <!-- Sort Options -->
-                <select id="sortOptions" onchange="sortPDFs()" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                    <option value="name">Urutkan: Nama</option>
-                    <option value="date">Urutkan: Tanggal</option>
-                    <option value="size">Urutkan: Ukuran</option>
-                </select>
+            
+            <!-- Tooltip Text (Hidden by default, shows on hover) -->
+            <div class="absolute right-full mr-3 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 whitespace-nowrap shadow-lg">
+                Chat via WhatsApp
+                <!-- Arrow pointing to button -->
+                <div class="absolute top-1/2 -right-1 transform -translate-y-1/2 w-2 h-2 bg-gray-900 rotate-45"></div>
             </div>
-        </div>
-
-        <!-- PDF Grid -->
-        <div id="pdfGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <!-- PDF cards will be inserted here -->
-        </div>
-
-        <!-- Empty State -->
-        <div id="emptyState" class="text-center py-12 hidden">
-            <i class="fas fa-file-pdf text-6xl text-gray-300 mb-4"></i>
-            <h3 class="text-xl font-semibold text-gray-600 mb-2">Belum ada dokumen PDF</h3>
-            <p class="text-gray-500 mb-6">Mulai dengan menambahkan file PDF pertama Anda</p>
-            <button onclick="uploadPDF()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg">
-                <i class="fas fa-plus mr-2"></i>Tambah PDF Pertama
-            </button>
+        </a>
+        
+        <!-- Floating notification dot -->
+        <div class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center animate-pulse">
+            <span class="text-white text-xs font-bold">!</span>
         </div>
     </div>
 
-    <!-- Upload PDF Modal -->
-    <div id="uploadModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl max-w-md w-full">
-            <div class="flex items-center justify-between p-6 border-b">
-                <h3 class="text-lg font-semibold text-gray-900">Tambah PDF Baru</h3>
-                <button onclick="closeUploadModal()" class="text-gray-500 hover:text-gray-700">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-            <form id="uploadForm" class="p-6 space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">File PDF</label>
-                    <input type="file" id="pdfFileInput" accept=".pdf" 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Nama Dokumen *</label>
-                    <input type="text" id="pdfNameInput" placeholder="Masukkan nama dokumen" 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Kategori</label>
-                    <select id="pdfCategoryInput" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                        <option value="dokumen">Dokumen</option>
-                        <option value="laporan">Laporan</option>
-                        <option value="panduan">Panduan</option>
-                        <option value="presentasi">Presentasi</option>
-                        <option value="lainnya">Lainnya</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Deskripsi</label>
-                    <textarea id="pdfDescriptionInput" rows="3" placeholder="Deskripsi singkat dokumen..." 
-                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
-                </div>
-            </form>
-            <div class="px-6 py-4 border-t flex justify-end space-x-3">
-                <button onclick="closeUploadModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800">
-                    Batal
-                </button>
-                <button onclick="handleFileUpload()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg">
-                    <i class="fas fa-plus mr-2"></i>Tambah PDF
-                </button>
-            </div>
-        </div>
-    </div>
 
-    <!-- PDF Viewer Modal -->
-    <div id="pdfModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
-            <div class="flex items-center justify-between p-4 border-b">
-                <h3 id="modalTitle" class="text-lg font-semibold text-gray-900"></h3>
-                <button onclick="closePDFModal()" class="text-gray-500 hover:text-gray-700">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-            <div class="flex-1 p-4">
-                <iframe id="pdfViewer" class="w-full h-96 border rounded-lg"></iframe>
-            </div>
-            <div class="p-4 border-t flex justify-between">
-                <button onclick="downloadPDF()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
-                    <i class="fas fa-download mr-2"></i>Download
-                </button>
-                <button onclick="closePDFModal()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg">
-                    Tutup
-                </button>
-            </div>
-        </div>
-    </div>
 
-    <script>
-        // Sample PDF data - replace with your actual PDF files
-        let pdfFiles = [
-            {
-                id: 1,
-                name: "Panduan Netlify Deploy",
-                filename: "panduan-netlify.pdf",
-                category: "panduan",
-                size: "2.5 MB",
-                date: "2024-01-15",
-                description: "Panduan lengkap cara deploy website di Netlify"
-            },
-            {
-                id: 2,
-                name: "Laporan Keuangan Q1 2024",
-                filename: "laporan-keuangan-q1.pdf",
-                category: "laporan",
-                size: "1.8 MB",
-                date: "2024-01-10",
-                description: "Laporan keuangan triwulan pertama tahun 2024"
-            },
-            {
-                id: 3,
-                name: "Dokumentasi API",
-                filename: "dokumentasi-api.pdf",
-                category: "dokumen",
-                size: "3.2 MB",
-                date: "2024-01-08",
-                description: "Dokumentasi lengkap penggunaan API"
-            },
-            {
-                id: 4,
-                name: "Presentasi Strategi Bisnis",
-                filename: "presentasi-strategi.pdf",
-                category: "presentasi",
-                size: "4.1 MB",
-                date: "2024-01-05",
-                description: "Presentasi strategi bisnis untuk tahun 2024"
-            }
-        ];
+         
+          <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97c53e3b42dffd6d',t:'MTc1NzQwNTc4Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
 
-        let filteredFiles = [...pdfFiles];
-        let currentPDF = null;
+<script async src="https://cse.google.com/cse.js?cx=e4c237a80056843c6">
 
-        function renderPDFs() {
-            const grid = document.getElementById('pdfGrid');
-            const emptyState = document.getElementById('emptyState');
-            
-            if (filteredFiles.length === 0) {
-                grid.innerHTML = '';
-                emptyState.classList.remove('hidden');
-                return;
-            }
-
-            emptyState.classList.add('hidden');
-            
-            grid.innerHTML = filteredFiles.map(pdf => `
-                <div class="pdf-card bg-white rounded-xl shadow-md overflow-hidden">
-                    <div class="p-6">
-                        <div class="flex items-start justify-between mb-4">
-                            <div class="flex items-center space-x-3">
-                                <i class="fas fa-file-pdf text-2xl text-red-500"></i>
-                                <div>
-                                    <h3 class="font-semibold text-gray-900 text-sm leading-tight">${pdf.name}</h3>
-                                    <span class="inline-block mt-1 px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">${pdf.category}</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">${pdf.description}</p>
-                        
-                        <div class="flex items-center justify-between text-xs text-gray-500 mb-4">
-                            <span><i class="fas fa-calendar mr-1"></i>${formatDate(pdf.date)}</span>
-                            <span><i class="fas fa-file-alt mr-1"></i>${pdf.size}</span>
-                        </div>
-                        
-                        <div class="flex space-x-2">
-                            <button onclick="viewPDF('${pdf.filename}', '${pdf.name}')" 
-                                    class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm py-2 px-3 rounded-lg transition-colors">
-                                <i class="fas fa-eye mr-1"></i>Lihat
-                            </button>
-                            <button onclick="downloadPDFDirect('${pdf.filename}')" 
-                                    class="bg-green-600 hover:bg-green-700 text-white text-sm py-2 px-3 rounded-lg transition-colors">
-                                <i class="fas fa-download"></i>
-                            </button>
-                            <button onclick="deletePDF(${pdf.id})" 
-                                    class="bg-red-600 hover:bg-red-700 text-white text-sm py-2 px-3 rounded-lg transition-colors">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-
-            updateFileCount();
-        }
-
-        function searchPDFs() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const categoryFilter = document.getElementById('categoryFilter').value;
-            
-            filteredFiles = pdfFiles.filter(pdf => {
-                const matchesSearch = pdf.name.toLowerCase().includes(searchTerm) || 
-                                    pdf.description.toLowerCase().includes(searchTerm);
-                const matchesCategory = !categoryFilter || pdf.category === categoryFilter;
-                
-                return matchesSearch && matchesCategory;
-            });
-            
-            renderPDFs();
-        }
-
-        function filterByCategory() {
-            searchPDFs(); // Reuse search function for filtering
-        }
-
-        function sortPDFs() {
-            const sortBy = document.getElementById('sortOptions').value;
-            
-            filteredFiles.sort((a, b) => {
-                switch(sortBy) {
-                    case 'name':
-                        return a.name.localeCompare(b.name);
-                    case 'date':
-                        return new Date(b.date) - new Date(a.date);
-                    case 'size':
-                        return parseFloat(b.size) - parseFloat(a.size);
-                    default:
-                        return 0;
-                }
-            });
-            
-            renderPDFs();
-        }
-
-        function viewPDF(filename, title) {
-            currentPDF = filename;
-            document.getElementById('modalTitle').textContent = title;
-            
-            // Check if it's a local file (has localURL)
-            const pdfFile = pdfFiles.find(pdf => pdf.filename === filename);
-            const pdfSrc = pdfFile && pdfFile.localURL ? pdfFile.localURL : filename;
-            
-            document.getElementById('pdfViewer').src = pdfSrc;
-            document.getElementById('pdfModal').classList.remove('hidden');
-        }
-
-        function closePDFModal() {
-            document.getElementById('pdfModal').classList.add('hidden');
-            document.getElementById('pdfViewer').src = '';
-            currentPDF = null;
-        }
-
-        function downloadPDF() {
-            if (currentPDF) {
-                downloadPDFDirect(currentPDF);
-            }
-        }
-
-        function downloadPDFDirect(filename) {
-            const pdfFile = pdfFiles.find(pdf => pdf.filename === filename);
-            const link = document.createElement('a');
-            
-            if (pdfFile && pdfFile.localURL) {
-                // For locally uploaded files
-                link.href = pdfFile.localURL;
-                link.download = filename;
-            } else {
-                // For server files
-                link.href = filename;
-                link.download = filename;
-            }
-            
-            link.click();
-        }
-
-        function deletePDF(id) {
-            if (confirm('Apakah Anda yakin ingin menghapus file PDF ini?')) {
-                pdfFiles = pdfFiles.filter(pdf => pdf.id !== id);
-                filteredFiles = filteredFiles.filter(pdf => pdf.id !== id);
-                renderPDFs();
-            }
-        }
-
-        function uploadPDF() {
-            document.getElementById('uploadModal').classList.remove('hidden');
-        }
-
-        function closeUploadModal() {
-            document.getElementById('uploadModal').classList.add('hidden');
-            document.getElementById('uploadForm').reset();
-        }
-
-        function handleFileUpload() {
-            const fileInput = document.getElementById('pdfFileInput');
-            const nameInput = document.getElementById('pdfNameInput');
-            const categoryInput = document.getElementById('pdfCategoryInput');
-            const descriptionInput = document.getElementById('pdfDescriptionInput');
-
-            if (!fileInput.files[0]) {
-                alert('Silakan pilih file PDF terlebih dahulu!');
-                return;
-            }
-
-            if (!nameInput.value.trim()) {
-                alert('Silakan masukkan nama dokumen!');
-                return;
-            }
-
-            const file = fileInput.files[0];
-            
-            // Validate file type
-            if (file.type !== 'application/pdf') {
-                alert('Hanya file PDF yang diperbolehkan!');
-                return;
-            }
-
-            // Create new PDF object
-            const newPDF = {
-                id: Date.now(), // Simple ID generation
-                name: nameInput.value.trim(),
-                filename: file.name,
-                category: categoryInput.value || 'lainnya',
-                size: formatFileSize(file.size),
-                date: new Date().toISOString().split('T')[0],
-                description: descriptionInput.value.trim() || 'Tidak ada deskripsi',
-                fileObject: file // Store file object for local access
-            };
-
-            // Add to arrays
-            pdfFiles.push(newPDF);
-            filteredFiles = [...pdfFiles];
-
-            // Create object URL for viewing
-            const fileURL = URL.createObjectURL(file);
-            newPDF.localURL = fileURL;
-
-            // Re-render and close modal
-            renderPDFs();
-            closeUploadModal();
-            
-            alert(`PDF "${newPDF.name}" berhasil ditambahkan!\n\nCatatan: File ini tersimpan sementara di browser. Untuk deploy permanen ke Netlify, upload file PDF ke folder proyek Anda.`);
-        }
-
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-        }
-
-        function formatDate(dateString) {
-            const options = { year: 'numeric', month: 'short', day: 'numeric' };
-            return new Date(dateString).toLocaleDateString('id-ID', options);
-        }
-
-        function updateFileCount() {
-            document.getElementById('totalFiles').textContent = `${filteredFiles.length} dokumen`;
-        }
-
-        // Initialize the page
-        document.addEventListener('DOMContentLoaded', function() {
-            renderPDFs();
-        });
-
-        // Close modal when clicking outside
-        document.getElementById('pdfModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closePDFModal();
-            }
-        });
-
-        // Close upload modal when clicking outside
-        document.getElementById('uploadModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeUploadModal();
-            }
-        });
-    </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97c57466b382fce4',t:'MTc1NzQwODAwMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
