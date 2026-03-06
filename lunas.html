@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="id" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bukti Pembayaran Lunas</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    * {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .receipt-pattern {
+      background-color: #f0fdf4;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2322c55e' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .stamp {
+      transform: rotate(-15deg);
+      animation: stampIn 0.5s ease-out;
+    }
+    @keyframes stampIn {
+      0% {
+        transform: rotate(-15deg) scale(2);
+        opacity: 0;
+      }
+      100% {
+        transform: rotate(-15deg) scale(1);
+        opacity: 1;
+      }
+    }
+    .zigzag-top {
+      background: linear-gradient(-135deg, #ffffff 5px, transparent 0) 0 5px,
+                  linear-gradient(135deg, #ffffff 5px, #f0fdf4 0) 0 5px;
+      background-size: 10px 10px;
+      height: 10px;
+    }
+    .zigzag-bottom {
+      background: linear-gradient(-45deg, #ffffff 5px, transparent 0) 0 5px,
+                  linear-gradient(45deg, #ffffff 5px, #f0fdf4 0) 0 5px;
+      background-size: 10px 10px;
+      height: 10px;
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full bg-gradient-to-br from-emerald-50 via-white to-green-50 overflow-auto">
+  <div class="min-h-full w-full flex items-center justify-center p-4 sm:p-8">
+   <div class="w-full max-w-md">
+    <!-- Receipt Container -->
+    <div class="relative">
+     <!-- Zigzag Top -->
+     <div class="zigzag-top"></div><!-- Main Receipt -->
+     <div class="bg-white px-6 py-8 sm:px-8 shadow-2xl relative receipt-pattern">
+      <!-- Header -->
+      <div class="text-center mb-6 relative">
+       <div class="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 rounded-full mb-4">
+        <i data-lucide="check-circle" class="w-10 h-10 text-emerald-600"></i>
+       </div>
+       <h1 id="doc-title" class="text-2xl font-extrabold text-gray-800 tracking-tight">BUKTI PEMBAYARAN</h1>
+       <p class="text-emerald-600 font-semibold text-sm mt-1">Jasa Server Tahunan</p>
+      </div><!-- LUNAS Stamp -->
+      <div class="absolute top-20 right-4 sm:right-8 stamp">
+       <div class="border-4 border-emerald-600 rounded-lg px-4 py-2 bg-emerald-50/80">
+        <span class="text-emerald-600 font-extrabold text-xl tracking-widest">LUNAS</span>
+       </div>
+      </div><!-- Divider -->
+      <div class="border-t-2 border-dashed border-gray-200 my-6"></div><!-- Invoice Details -->
+      <div class="space-y-4">
+       <!-- Nomor Tagihan -->
+       <div class="flex justify-between items-center">
+        <span class="text-gray-500 text-sm">Nomor Tagihan</span> <span id="nomor-tagihan" class="font-bold text-gray-800 text-lg">72020DKT</span>
+       </div><!-- Nama Server -->
+       <div class="flex justify-between items-center">
+        <span class="text-gray-500 text-sm">Nama Link Server</span> <span id="nama-server" class="font-semibold text-gray-800">Bumdesku.online</span>
+       </div><!-- Nama Pelanggan -->
+       <div class="flex justify-between items-center">
+        <span class="text-gray-500 text-sm">Nama Pelanggan</span> <span id="nama-pelanggan" class="font-semibold text-gray-800">-</span>
+       </div><!-- Periode -->
+       <div class="bg-gray-50 rounded-lg p-4 mt-4">
+        <p class="text-gray-500 text-xs mb-2 uppercase tracking-wide">Periode Layanan</p>
+        <div class="flex items-center justify-between">
+         <div class="text-center">
+          <p class="text-xs text-gray-400">Mulai</p>
+          <p id="periode-mulai" class="font-semibold text-gray-700">01/01/2025</p>
+         </div><i data-lucide="arrow-right" class="w-5 h-5 text-emerald-500"></i>
+         <div class="text-center">
+          <p class="text-xs text-gray-400">Berakhir</p>
+          <p id="periode-akhir" class="font-semibold text-gray-700">31/12/2025</p>
+         </div>
+        </div>
+       </div>
+      </div><!-- Divider -->
+      <div class="border-t-2 border-dashed border-gray-200 my-6"></div><!-- Total -->
+      <div class="bg-emerald-600 rounded-xl p-5 text-center shadow-lg">
+       <p class="text-emerald-100 text-sm mb-1">Total Pembayaran</p>
+       <p id="total-tagihan" class="text-white text-3xl font-extrabold">Rp 500.000</p>
+       <p class="text-emerald-200 text-xs mt-1">/Tahun</p>
+      </div><!-- Payment Info -->
+      <div class="mt-6 bg-gray-50 rounded-lg p-4">
+       <div class="flex items-center gap-3 mb-3">
+        <i data-lucide="calendar-check" class="w-5 h-5 text-emerald-600"></i>
+        <div>
+         <p class="text-xs text-gray-400">Tanggal Pembayaran</p>
+         <p id="tanggal-bayar" class="font-semibold text-gray-700"></p>
+        </div>
+       </div>
+       <div class="flex items-center gap-3">
+        <i data-lucide="receipt" class="w-5 h-5 text-emerald-600"></i>
+        <div>
+         <p class="text-xs text-gray-400">No. Referensi</p>
+         <p id="no-referensi" class="font-semibold text-gray-700 font-mono text-sm"></p>
+        </div>
+       </div>
+      </div><!-- Footer -->
+      <div class="mt-6 text-center">
+       <div class="inline-flex items-center gap-2 text-emerald-600 bg-emerald-50 px-4 py-2 rounded-full">
+        <i data-lucide="shield-check" class="w-4 h-4"></i> <span class="text-sm font-medium">Pembayaran Terverifikasi</span>
+       </div>
+       <p class="text-gray-400 text-xs mt-4">Simpan bukti ini sebagai referensi pembayaran Anda</p>
+      </div>
+     </div><!-- Zigzag Bottom -->
+     <div class="zigzag-bottom"></div>
+    </div><!-- Download Button -->
+    <div class="mt-6 flex flex-col gap-3 text-center"><button onclick="window.print()" class="inline-flex items-center justify-center gap-2 bg-white text-emerald-600 font-semibold px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all hover:bg-emerald-50"> <i data-lucide="download" class="w-5 h-5"></i> <span>Cetak / Simpan PDF</span> </button> <button id="share-whatsapp" class="inline-flex items-center justify-center gap-2 bg-green-500 text-white font-semibold px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all hover:bg-green-600"> <i data-lucide="send" class="w-5 h-5"></i> <span>Bagikan ke WhatsApp</span> </button>
+    </div>
+   </div>
+  </div>
+  <script>
+    // Default configuration
+    const defaultConfig = {
+      nomor_tagihan: "72020DKT",
+      nama_server: "Bumdesku.online",
+      nama_pelanggan: "-",
+      total_tagihan: "Rp 500.000",
+      periode_mulai: "01/01/2025",
+      periode_akhir: "31/12/2025",
+      primary_color: "#059669",
+      secondary_color: "#f0fdf4",
+      text_color: "#1f2937",
+      accent_color: "#10b981",
+      surface_color: "#ffffff"
+    };
+
+    // Generate current date
+    function getCurrentDate() {
+      const now = new Date();
+      const options = { day: '2-digit', month: 'long', year: 'numeric' };
+      return now.toLocaleDateString('id-ID', options);
+    }
+
+    // Generate reference number
+    function generateRefNumber() {
+      const timestamp = Date.now().toString(36).toUpperCase();
+      const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+      return `PAY-${timestamp}-${random}`;
+    }
+
+    // Set initial values
+    document.getElementById('tanggal-bayar').textContent = getCurrentDate();
+    document.getElementById('no-referensi').textContent = generateRefNumber();
+
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Element SDK integration
+    async function onConfigChange(config) {
+      document.getElementById('nomor-tagihan').textContent = config.nomor_tagihan || defaultConfig.nomor_tagihan;
+      document.getElementById('nama-server').textContent = config.nama_server || defaultConfig.nama_server;
+      document.getElementById('nama-pelanggan').textContent = config.nama_pelanggan || defaultConfig.nama_pelanggan;
+      document.getElementById('total-tagihan').textContent = config.total_tagihan || defaultConfig.total_tagihan;
+      document.getElementById('periode-mulai').textContent = config.periode_mulai || defaultConfig.periode_mulai;
+      document.getElementById('periode-akhir').textContent = config.periode_akhir || defaultConfig.periode_akhir;
+    }
+
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [
+          {
+            get: () => config.secondary_color || defaultConfig.secondary_color,
+            set: (value) => { config.secondary_color = value; window.elementSdk.setConfig({ secondary_color: value }); }
+          },
+          {
+            get: () => config.surface_color || defaultConfig.surface_color,
+            set: (value) => { config.surface_color = value; window.elementSdk.setConfig({ surface_color: value }); }
+          },
+          {
+            get: () => config.text_color || defaultConfig.text_color,
+            set: (value) => { config.text_color = value; window.elementSdk.setConfig({ text_color: value }); }
+          },
+          {
+            get: () => config.primary_color || defaultConfig.primary_color,
+            set: (value) => { config.primary_color = value; window.elementSdk.setConfig({ primary_color: value }); }
+          },
+          {
+            get: () => config.accent_color || defaultConfig.accent_color,
+            set: (value) => { config.accent_color = value; window.elementSdk.setConfig({ accent_color: value }); }
+          }
+        ],
+        borderables: [],
+        fontEditable: undefined,
+        fontSizeable: undefined
+      };
+    }
+
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ["nomor_tagihan", config.nomor_tagihan || defaultConfig.nomor_tagihan],
+        ["nama_server", config.nama_server || defaultConfig.nama_server],
+        ["nama_pelanggan", config.nama_pelanggan || defaultConfig.nama_pelanggan],
+        ["total_tagihan", config.total_tagihan || defaultConfig.total_tagihan],
+        ["periode_mulai", config.periode_mulai || defaultConfig.periode_mulai],
+        ["periode_akhir", config.periode_akhir || defaultConfig.periode_akhir]
+      ]);
+    }
+
+    // Initialize SDK
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
+    }
+
+    // WhatsApp Share Function
+    document.getElementById('share-whatsapp').addEventListener('click', function() {
+      const nomorTagihan = document.getElementById('nomor-tagihan').textContent;
+      const namaServer = document.getElementById('nama-server').textContent;
+      const totalTagihan = document.getElementById('total-tagihan').textContent;
+      const periodeMulai = document.getElementById('periode-mulai').textContent;
+      const periodeAkhir = document.getElementById('periode-akhir').textContent;
+
+      const message = `*🧾 BUKTI PEMBAYARAN LUNAS*\n\n` +
+                     `Nomor Tagihan: *${nomorTagihan}*\n` +
+                     `Link Server: *${namaServer}*\n` +
+                     `Total: *${totalTagihan}/Tahun*\n\n` +
+                     `📅 Periode Layanan:\n` +
+                     `• Mulai: ${periodeMulai}\n` +
+                     `• Berakhir: ${periodeAkhir}\n\n` +
+                     `✅ Status: *LUNAS*\n` +
+                     `Server siap digunakan kembali!\n\n` +
+                     `Simpan bukti pembayaran ini sebagai referensi.`;
+
+      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, '_blank');
+    });
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d821acf05faddfc',t:'MTc3MjgwNzkxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
